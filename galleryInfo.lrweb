@@ -26,7 +26,7 @@ return {
 	supportsLiveUpdate = true,
 	
 	model = {
-		["lightroomApplication.jpegQuality"] = 80,
+		["lightroomApplication.jpegQuality"] = 75,
 		["lightroomApplication.useWatermark"] = false,
 		["lightroomApplication.outputSharpeningOn"] = true,
 		["lightroomApplication.outputSharpening"] = 2,
@@ -48,6 +48,7 @@ return {
 		["metadata.siteTitle.value"] = "Site Title",
 		["metadata.collectionTitle.value"] = "Collection Title",
 		["metadata.collectionDescription.value"] = "Collection Description",
+		["metadata.usage.value"] = "To enter fullscreen mode, either click on a picture or use the right arrow on your keyboard.<br/>\nIn fullscreen mode, use left and right arrows to navigate between pictures, escape to exit.",
 		["metadata.contactInfo.value"] = "Contact Info",
 		["metadata.contactInfo.link"] = {
 			   value = "mailto:user@domain",
@@ -66,9 +67,6 @@ return {
            enabled=true,
            value="{{com.adobe.caption}}",
         },                                    
-        ["nonCSS.imagesPerPage"] = 5, 
-        ["nonCSS.displayImageTopNumber"] = false, 
-        ["nonCSS.displayImageNumber"] = true, 
         ["nonCSS.displayPoweredBy"] = true, 
         ["nonCSS.GATrackerID"] = "",
 
@@ -131,13 +129,17 @@ return {
 --					},
 
 					f:labeled_text_input {
-						title = "Site Title (ST)",
+						title = "Site Title",
 						value = bind "metadata.siteTitle.value",
 					},
 
 					f:labeled_text_input {
-						title = "Collection Title (CT)",
+						title = "Collection Title",
 						value = bind "metadata.collectionTitle.value",
+					},
+					f:labeled_text_input {
+						title = "Usage Text",
+						value = bind "metadata.usage.value",
 					},
                },
 
@@ -200,31 +202,6 @@ return {
 					value = bind "nonCSS.displayPoweredBy",
 
 				},
-				f:checkbox_row {
-                   title = "Display Image Number (top)",
-					value = bind "nonCSS.displayImageTopNumber",
-
-				},
-				f:checkbox_row {
-                   title = "Display Image Number (bottom)",
-					value = bind "nonCSS.displayImageNumber",
-
-				},
-            f:header_section_label {
-                title = "Infinite Scrolling Configuration",
-			},
-			f:slider_content_column {
-				f:slider_row {
-					title = "Number of images per load ",
-					value = bind "nonCSS.imagesPerPage",
-					max = 100,
-					min = 1,
-					width_in_digits = 2,
-					precision = 0,
-                          bindingEnabled=true,
-				},
-                       
-          },
 			},
 
 

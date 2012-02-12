@@ -4,6 +4,11 @@
 	    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     	<title>$model.metadata.siteTitle.value</title>
 		<script type='text/javascript' src='resources/jquery-1.7.1.min.js' ></script>
+
+	    <% if mode=="preview" then %>
+	    <script  type="text/javascript" src="resources/live_update.js"></script>
+	    <% end %>
+
 		
         <% if mode=="publish" then %>
         <% if model.nonCSS.GATrackerID:len()>0 then %>
@@ -17,7 +22,6 @@
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
-  
         </script>
         <% end %>
         <% end %>
@@ -27,6 +31,13 @@
 			body {
 				background-color:black;
 				color:white;
+				font-family:arial,helvetica;
+				font-size:12px;
+			}
+
+			a {
+				color:white;
+				text-decoration:underline;
 			}
 
 			.vignettes {
@@ -97,8 +108,31 @@
 				display:none;
 			}
 			.header {
-				
+				margin-bottom:40px;
 			}
+			.infos {
+				margin-top:30px;
+				width:880px;
+				text-align:left;
+			}
+			
+			.usage {
+				float:left;
+				width:75%;
+			}
+			.contactInfos {
+				float:right;
+				width:25%;
+				text-align:right;
+			}
+			.poweredBy {
+				margin-top:5px;
+				float:right;
+				width:25%;
+				text-align:right;
+				font-size:10px;
+			}
+				
 		</style>
 	</head>
 <body>
@@ -108,7 +142,7 @@
 			jQuery(document).keydown(function(event){
 				if(event.keyCode==27){
 					jQuery("div.popup").hide();
-					window.location.hash='';
+					window.location.hash="";
 					return;
 				}
 				if(event.keyCode==39){
@@ -213,14 +247,25 @@
 		</div>
 		<div class="header">
 			<div class="title">
-				<h1>$model.metadata.siteTitle.value</h1>
+				<h1 id="metadata.siteTitle.value">$model.metadata.siteTitle.value</h1>
 			</div>
 			<div class="subtitle">
-				<h2>$model.metadata.collectionTitle.value</h2>
+				<h2 id="metadata.collectionTitle.value">$model.metadata.collectionTitle.value</h2>
 			</div>
-			<div class="usage" >
-				To enter fullscreen mode, either click on a picture or use the right arrow on your keyboard.<br/>
-				In fullscreenn mode, use left and right arrows to navigate bewtten picture, escape to exit.
+			<div class="infos">
+				<div class="usage" id="metadata.usage.value">
+					$model.metadata.usage.value
+				</div>
+				<div class="contactInfos">
+					<a id="metadata.contactInfo.value" class="contactLink" href="$model.metadata.contactInfo.link" >$model.metadata.contactInfo.value</a>
+				</div>
+				<% if model.nonCSS.displayPoweredBy then %>
+			    <div class="poweredBy">
+			      	Powered by <a href="http://pure.cestdelamerde.com" alt="Free Lightroom web gallery that was used to generate this page">Pure Gallery</a>
+			    </div>
+			    <% end %>
+				
+				<div style="clear:both"></div>
 			</div>
 		</div>
 		<div class="vignettes">
