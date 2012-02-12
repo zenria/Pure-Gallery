@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:lr="http://adobe.com/lrg/0.0">
+	<head>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    	<title>$model.metadata.siteTitle.value</title>
+		<script type='text/javascript' src='resources/jquery-1.7.1.min.js' ></script>
+		
+        <% if mode=="publish" then %>
+        <% if model.nonCSS.GATrackerID:len()>0 then %>
+        <script type="text/javascript">
+             var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '<%= model.nonCSS.GATrackerID %>']);
+            _gaq.push(['_trackPageview']);
+            
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+  
+        </script>
+        <% end %>
+        <% end %>
+		
+		
+		<style type="text/css">
+			body {
+				background-color:black;
+				color:white;
+			}
+
+			.vignettes {
+				width:880px;
+			}			
+			
+			.vignette {
+				float:left;
+				text-align:center;
+				height:220px;
+				width:220px;
+				position:relative;
+			}
+			.vignette img {
+				border:1px solid grey;
+			}
+			.vignette .number {
+				font-family:arial,helvetica;
+				font-size:20px;
+				background-color:black;
+				opacity:0.2;
+				color:white;
+				position:absolute;
+				left: 0;
+				right:0;
+				top:0px;
+			}
+			
+			.popup {
+				display:none;
+				z-index:10000;
+				position:fixed;
+				width:100%;
+				height:100%;
+				left:0;
+				right:0;
+				top:0;
+				background-color:black;
+			}
+			
+			.popup img {
+				max-width:100%;
+				max-height:100%;
+			}
+			.popup .button {
+				font-size:60px;
+				color:grey;
+			}
+			.popup .button a {
+				color:grey;
+				text-decoration:none;
+			}
+			.popup .prev {
+				position:absolute;
+				z-index:10001;
+				left:20px;
+				top:0;
+				bottom:0;
+			}
+			.popup .next {
+				position:absolute;
+				z-index:10001;
+				right:20px;
+				top:0;
+				bottom:0;
+			}
+			.backgroundLoader {
+				display:none;
+			}
+			.header {
+				
+			}
+		</style>
+	</head>
+<body>
+	<script>
+		var current = 0;
+		jQuery(document).ready(function(){
+			jQuery(document).keydown(function(event){
+				if(event.keyCode==27){
+					jQuery("div.popup").hide();
+					window.location.hash='';
+					return;
+				}
+				if(event.keyCode==39){
+					openImg(current+1);
+					return;
+				}
+				if(event.keyCode==37){
+					openImg(current-1);
+					return;
+				}
+			});
+			
+			if (window.location.hash){
+				current = parseInt( window.location.hash.substring(1));
+            	openImg(current);
+            }
+			// start background image loader.
+			backgroundLoadImages()
+			
+		});
+		
+		var imageUrlsToLoadInBackground = [];
+		
+		function backgroundLoadImages(){
+			// load image by image all full size images of this page.
+		
+			// construct a list of image to preload: start by the one currently displayed, 
+			// if none (current==0) start by the first image
+			
+			var imageUrls = [];
+			
+			jQuery("div.vignette a>img").each(function(i,img){
+				imageUrls.push("large/"+jQuery(img).attr("src").substring(10))
+			});
+			for( var i = 0 ; i < imageUrls.length ; i++){
+				imageUrlsToLoadInBackground.push(imageUrls[(i+current)%imageUrls.length])
+			}
+			backgroundLoad()
+		}
+		function backgroundLoad(){
+			if(imageUrlsToLoadInBackground.length==0){
+//				console.log("Done loading")
+				return;
+			}
+			var imageUrl = imageUrlsToLoadInBackground.shift();
+//			console.log("Loading "+imageUrl);
+			var img = new Image();
+			jQuery(img).load(function(event){
+				// image loaded
+				backgroundLoad();
+			})
+			img.src = imageUrl;
+			jQuery(".backgroundLoader").append(img);
+		
+		}
+
+		function openImg(number){
+			if(number<=0){
+				current=0;
+				jQuery("div.popup").hide();
+				window.location.hash='';
+				return;
+			}
+			current = number;
+			var src = jQuery("a[name='"+number+"']>img").attr("src");
+			if(typeof(src)=="undefined"){
+				openImg(0);
+				return;
+			}
+			var imgFilename = jQuery("a[name='"+number+"']>img").attr("src").substring(10);
+		
+			load(number,imgFilename);
+		}
+		
+		function load(number,imgFilename){			
+			jQuery("div.popup img").unbind("load")	
+			jQuery("div.popup img").attr("src", "large/"+imgFilename);
+			jQuery("div.popup div.prev a").unbind('click').click(function(){
+				openImg(number-1);
+				return false;
+			})
+			jQuery("div.popup div.next a").unbind('click').click(function(){
+				openImg(number+1);
+				return false;
+			})
+			jQuery("div.popup").show();
+			window.location.hash='#'+current;
+		}
+		
+	</script>
+	<center>
+		<div class="backgroundLoader">
+		</div>
+		<div class="popup">
+			<img src="data:image/gif;base64,R0lGODlhAQABAIAAANvf7wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="/>
+			<div class="button prev">
+				<a href="#0">&lt;</a>
+			</div>
+			<div class="button next">
+				<a href="#2">&gt;</a>
+			</div>
+		</div>
+		<div class="header">
+			<div class="title">
+				<h1>$model.metadata.siteTitle.value</h1>
+			</div>
+			<div class="subtitle">
+				<h2>$model.metadata.collectionTitle.value</h2>
+			</div>
+			<div class="usage" >
+				To enter fullscreen mode, either click on a picture or use the right arrow on your keyboard.<br/>
+				In fullscreenn mode, use left and right arrows to navigate bewtten picture, escape to exit.
+			</div>
+		</div>
+		<div class="vignettes">
+	    	<lr:ThumbnailGrid>
+    	    	<lr:GridPhotoCell>
+					<div class="vignette">
+						<div class="number">#<%= cellIndex %></div>
+						<a href="#<%= cellIndex %>" name="<%= cellIndex %>" onclick="openImg(<%= cellIndex %>);return false;"><img src="vignettes/<%= image.exportFilename %>.jpg"/></a>
+					</div>
+				</lr:GridPhotoCell>
+			</lr:ThumbnailGrid>
+			<div style="clear:both"></div>
+		</div>
+	</center>
+	
+
+</body>

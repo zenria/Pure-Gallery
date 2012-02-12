@@ -1,0 +1,285 @@
+local warningFontName, warningFontSize
+if MAC_ENV then
+	warningFontName = "MyriadWebPro-Italic"
+	warningFontSize = "11"
+else
+	warningFontName = "MyriadWebPro-Italic"
+	warningFontSize = "10"
+end
+
+local warningFont = {
+	name = warningFontName,
+	size = tonumber( warningFontSize ),
+}
+
+local useMultiBind = false
+
+return {
+	LrSdkVersion = 2.0,
+	LrSdkMinimumVersion = 2.0, -- minimum SDK version required by this plugin
+	
+	version = 0.3,
+	title = LOC "$$$/GalleryName/Title=Pure Gallery",
+	id = "com.cestdelamerde.pure",
+	galleryType = "lua",
+	maximumGallerySize = 10000,
+	supportsLiveUpdate = true,
+	
+	model = {
+		["lightroomApplication.jpegQuality"] = 80,
+		["lightroomApplication.useWatermark"] = false,
+		["lightroomApplication.outputSharpeningOn"] = true,
+		["lightroomApplication.outputSharpening"] = 2,
+		
+		["photoSizes.vignettes.width"] = 200,
+		["photoSizes.vignettes.height"] = 200,
+		-- ["photoSizes.vignettes.maxWidth"] = 990,
+		-- ["photoSizes.vignettes.maxHeight"] = 660,
+		["photoSizes.vignettes.directory"] = "vignettes",
+		["photoSizes.vignettes.cropMode"] = "normal",
+		["photoSizes.large.width"] = 1600,
+		["photoSizes.large.height"] = 1024,
+		["photoSizes.large.directory"] = "large",
+		["photoSizes.large.cropMode"] = "normal",
+		["photoSizes.photos.metadataExportMode"] = "all",
+		["photoSizes.large.metadataExportMode"] = "all",
+		
+		--["metadata.htmlTitle.value"] = "Page Title",
+		["metadata.siteTitle.value"] = "Site Title",
+		["metadata.collectionTitle.value"] = "Collection Title",
+		["metadata.collectionDescription.value"] = "Collection Description",
+		["metadata.contactInfo.value"] = "Contact Info",
+		["metadata.contactInfo.link"] = {
+			   value = "mailto:user@domain",
+			   metadata = { [ 'ag:dataType' ] = 'webLink' },
+			   },
+
+        ["perImageSetting.topTitle"] = {
+           enabled=true,
+           value="",
+        },                                    
+        ["perImageSetting.title"] = {
+           enabled=true,
+           value="{{com.adobe.title}}",
+        },                                    
+        ["perImageSetting.description"] = {
+           enabled=true,
+           value="{{com.adobe.caption}}",
+        },                                    
+        ["nonCSS.imagesPerPage"] = 5, 
+        ["nonCSS.displayImageTopNumber"] = false, 
+        ["nonCSS.displayImageNumber"] = true, 
+        ["nonCSS.displayPoweredBy"] = true, 
+        ["nonCSS.GATrackerID"] = "",
+
+	}, --[[ /model ]]
+
+
+	properties = {
+		perImage = {
+  			{ id = 'topTitle',
+				title = "Top Title" },
+  			{ id = 'title',
+				title = "Title" },
+  			{ id = 'description',
+				title = "Description" },
+		},
+               
+	}, --[[ /properties ]]
+
+
+--[[ Begin LR Web Module Panels ]]
+
+	views = function( controller, f )
+		local LrView = import "LrView"
+		local bind = LrView.bind
+		local multibind = f.multibind
+
+		return {
+	
+--[[ Begin Labels Pane ]]
+
+			labels = f:panel_content {
+				bindToObject = controller,
+			
+				f:subdivided_sections {
+					f:header_section_label {
+						title = LOC "Infinite Scroll Gallery",
+					},
+					f:content_column {
+						f:row {
+							place = 'vertical',
+							f:static_text  {
+								title = "http://gassmann.fr/infinite",
+							},
+						},
+					},
+				},
+
+
+	
+	--[[ Begin Site and Collection Titles ]]
+	
+				f:subdivided_sections {
+					f:header_section_label {
+						title = "Header Settings",
+					},
+
+--					f:labeled_text_input {
+--						title = "HTML <title>",
+--						value = bind "metadata.htmlTitle.value",
+--					},
+
+					f:labeled_text_input {
+						title = "Site Title (ST)",
+						value = bind "metadata.siteTitle.value",
+					},
+
+					f:labeled_text_input {
+						title = "Collection Title (CT)",
+						value = bind "metadata.collectionTitle.value",
+					},
+               },
+
+	--[[ Begin Contact Info ]]
+
+				f:subdivided_sections {
+					f:header_section_label {
+						title = "Contact Info Settings",
+					},
+
+					f:labeled_text_input {
+						title = "Contact Info",
+						value = bind "metadata.contactInfo.value",
+					},
+					f:labeled_text_input {
+						title = "Web or Mail Link",
+						value = bind "metadata.contactInfo.link",
+					},
+				},
+
+	--[[ Begin GA Info ]]
+
+				f:subdivided_sections {
+					f:header_section_label {
+						title = "Google Analytics",
+					},
+					f:content_column {
+						f:row {
+							place = 'vertical',
+							f:static_text  {
+								title = "You can add Google Analytics tracker\ncode to your gallery, simply fill the\ntracking id below",
+							},
+						},
+					},
+
+					f:labeled_text_input {
+						title = "GA Tracking ID",
+						value = bind "nonCSS.GATrackerID",
+					},
+				},
+				
+	--[[ End Contact Info ]]
+
+
+	
+	--[[ End Footer ]]
+
+			}, 
+
+--[[ /labels ]]
+
+     appearanceConfiguration = f:panel_content {
+		bindToObject = controller,
+			f:subdivided_sections {
+                 f:header_section_label {
+						title = "Display Properties",
+			     },
+				f:checkbox_row {
+					title = "Display Powered By",
+					value = bind "nonCSS.displayPoweredBy",
+
+				},
+				f:checkbox_row {
+                   title = "Display Image Number (top)",
+					value = bind "nonCSS.displayImageTopNumber",
+
+				},
+				f:checkbox_row {
+                   title = "Display Image Number (bottom)",
+					value = bind "nonCSS.displayImageNumber",
+
+				},
+            f:header_section_label {
+                title = "Infinite Scrolling Configuration",
+			},
+			f:slider_content_column {
+				f:slider_row {
+					title = "Number of images per load ",
+					value = bind "nonCSS.imagesPerPage",
+					max = 100,
+					min = 1,
+					width_in_digits = 2,
+					precision = 0,
+                          bindingEnabled=true,
+				},
+                       
+          },
+			},
+
+
+
+
+     },
+--[[ Begin Output Settings ]]
+
+			outputSettings = f:panel_content {
+				bindToObject = controller,
+                               
+
+	--[[ Output Sharpening ]]
+	
+				f:subdivided_sections {
+					f:header_section {
+						f:popup_row {
+							title = LOC "$$$/OutputSettings/Sharpening/Sharpening=Sharpening :", 
+							checkbox = { value = bind "lightroomApplication.outputSharpeningOn", },
+							value = bind "lightroomApplication.outputSharpening",
+							items = {
+							 	{ title = "Low" , value = 1 }, 
+								{ title = "Standard", value = 2 }, 
+								{ title = "High", value = 3 },
+							},
+							bindingEnabled = "lightroomApplication.outputSharpeningOn",
+						},
+					},
+					f:content_section {
+						margin_left = 30,
+						f:static_text {
+							fill_horizontal = 1,
+							title = LOC "$$$/OutputSettings/Sharpening/SharpeningMessage=Sharpening is applied on output.",
+							font = warningFont,
+						},
+					},
+
+				},
+				
+	--[[ End Output Sharpening ]]
+
+				
+			}, --[[ /outputSettings ]]
+
+	} --[[ /views ]]
+	end,
+
+--[[ End LR Web Module Panels ]]
+
+	galleryOptions = {
+		galleryName = "Pure Gallery",
+		galleryDescription = { "", 
+		},
+		galleryVersion = [[0.1]],
+	}, -- [[ /galleryOptions ]]
+
+} --[[ /return ]]
+

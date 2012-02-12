@@ -1,0 +1,21 @@
+--[[
+	Lightroom Web Gallery manifest.  This file maps various template files to actual
+	files to be produced for your website.
+	]]
+
+importTags( "lr", "com.adobe.lightroom.default" )
+
+
+AddResources {
+	source='resources',
+	destination='resources',
+}
+
+AddGridPages {
+	template='gallery.html',
+	rows= 10000,
+	columns=1,
+}
+
+
+
