@@ -4,6 +4,14 @@
 	    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     	<title>$model.metadata.siteTitle.value</title>
 		<script type='text/javascript' src='resources/jquery-1.7.1.min.js' ></script>
+		<script type="text/javascript">
+		jQuery(document).bind("mobileinit", function(){
+			jQuery.extend(  jQuery.mobile , {
+			    autoInitializePage: false
+			});
+		});
+		</script>
+		<script type='text/javascript' src='resources/jquery.mobile-1.1.1.min.js' ></script>
 
 	    <% if mode=="preview" then %>
 	    <script  type="text/javascript" src="resources/live_update.js"></script>
@@ -51,9 +59,11 @@
 				width:220px;
 				position:relative;
 			}
+			
 			.vignette img {
 				border:1px solid grey;
 			}
+			
 			.vignette .number {
 				font-family:arial,helvetica;
 				font-size:20px;
@@ -141,7 +151,8 @@
 		jQuery(document).ready(function(){
 			jQuery(document).keydown(function(event){
 				if(event.keyCode==27){
-					jQuery("div.popup").hide();
+					jQuery("#popup").hide();
+					jQuery("#vignettes").show();
 					window.location.hash="";
 					return;
 				}
@@ -155,12 +166,21 @@
 				}
 			});
 			
+			jQuery(document).bind("swipeleft", function(){
+				openImg(current+1);
+			});
+			
+			jQuery(document).bind("swiperight", function(){
+				openImg(current-1);
+			});
+			
 			if (window.location.hash){
 				current = parseInt( window.location.hash.substring(1));
             	openImg(current);
             }
 			// start background image loader.
 			backgroundLoadImages()
+			
 			
 		});
 		
@@ -202,7 +222,8 @@
 		function openImg(number){
 			if(number<=0){
 				current=0;
-				jQuery("div.popup").hide();
+				jQuery("#popup").hide();
+				jQuery("#vignettes").show();
 				window.location.hash='';
 				return;
 			}
@@ -217,18 +238,24 @@
 			load(number,imgFilename);
 		}
 		
-		function load(number,imgFilename){			
-			jQuery("div.popup img").unbind("load")	
-			jQuery("div.popup img").attr("src", "large/"+imgFilename);
-			jQuery("div.popup div.prev a").unbind('click').click(function(){
+		function load(number,imgFilename){
+			var popupImage = jQuery("#popupImg");	
+			popupImage.unbind("load")	
+			popupImage.attr("src", "large/"+imgFilename);
+			popupImage.unbind("click").click(function(){
+				jQuery("#popup").hide();
+				jQuery("#vignettes").show();
+			});
+			jQuery("#popupPrevLink").unbind('click').click(function(){
 				openImg(number-1);
 				return false;
 			})
-			jQuery("div.popup div.next a").unbind('click').click(function(){
+			jQuery("#popupNextLink").unbind('click').click(function(){
 				openImg(number+1);
 				return false;
 			})
-			jQuery("div.popup").show();
+			jQuery("#vignettes").hide();
+			jQuery("#popup").show();
 			window.location.hash='#'+current;
 		}
 		
@@ -236,13 +263,13 @@
 	<center>
 		<div class="backgroundLoader">
 		</div>
-		<div class="popup">
-			<img src="data:image/gif;base64,R0lGODlhAQABAIAAANvf7wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="/>
+		<div class="popup" id="popup">
+			<img src="data:image/gif;base64,R0lGODlhAQABAIAAANvf7wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" id="popupImg"/>
 			<div class="button prev">
-				<a href="#0">&lt;</a>
+				<a href="#0" id="popupPrevLink">&lt;</a>
 			</div>
 			<div class="button next">
-				<a href="#2">&gt;</a>
+				<a href="#2" id="popupNextLink">&gt;</a>
 			</div>
 		</div>
 		<div class="header">
@@ -268,7 +295,7 @@
 				<div style="clear:both"></div>
 			</div>
 		</div>
-		<div class="vignettes">
+		<div class="vignettes" id="vignettes">
 	    	<lr:ThumbnailGrid>
     	    	<lr:GridPhotoCell>
 					<div class="vignette">
