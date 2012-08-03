@@ -55,17 +55,21 @@ return {
 			   metadata = { [ 'ag:dataType' ] = 'webLink' },
 			   },
 
-        ["perImageSetting.topTitle"] = {
-           enabled=true,
-           value="",
-        },                                    
-        ["perImageSetting.title"] = {
+        ["perImageSetting.topLeftText"] = {
            enabled=true,
            value="{{com.adobe.title}}",
         },                                    
-        ["perImageSetting.description"] = {
-           enabled=true,
-           value="{{com.adobe.caption}}",
+        ["perImageSetting.topRightText"] = {
+           enabled=false,
+           value="",
+        },                                    
+        ["perImageSetting.bottomLeftText"] = {
+           enabled=false,
+           value="",
+        },                                    
+        ["perImageSetting.bottomRightText"] = {
+           enabled=false,
+           value="",
         },                                    
         ["nonCSS.displayPoweredBy"] = true, 
         ["nonCSS.GATrackerID"] = "",
@@ -75,12 +79,14 @@ return {
 
 	properties = {
 		perImage = {
-  			{ id = 'topTitle',
-				title = "Top Title" },
-  			{ id = 'title',
-				title = "Title" },
-  			{ id = 'description',
-				title = "Description" },
+  			{ id = 'topLeftText',
+				title = "Top Left Text" },
+  			{ id = 'topRightText',
+				title = "Top Right Text" },
+  			{ id = 'bottomLeftText',
+				title = "Bottom Left Text" },
+  			{ id = 'bottomRightText',
+				title = "Bottom Right text" },
 		},
                
 	}, --[[ /properties ]]

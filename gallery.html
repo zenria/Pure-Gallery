@@ -88,6 +88,16 @@
 				background-color:black;
 			}
 			
+			.popupFloatingText {
+				text-align:left;
+				position:absolute;
+				padding:2px 2px 2px 2px;
+				background-color:black;
+				opacity:0.5;
+				display:none;
+				z-index:10001;
+			}
+			
 			.popup img {
 				max-width:100%;
 				max-height:100%;
@@ -120,6 +130,7 @@
 			.header {
 				margin-bottom:40px;
 			}
+			
 			.infos {
 				margin-top:30px;
 				width:880px;
@@ -255,7 +266,49 @@
 				return false;
 			})
 			jQuery("#vignettes").hide();
+			jQuery("#po")
+			
 			jQuery("#popup").show();
+			popupImage.load(function(){
+				var topLeftTextNode = jQuery("#topLeftText_"+number)
+				if(topLeftTextNode.length>0){
+					jQuery("#topLeftText").text(topLeftTextNode.text()).css({
+						left: popupImage.position().left + "px"
+					}).show();
+				} else {
+					jQuery("#topLeftText").hide();
+				}
+
+				var topRightTextNode = jQuery("#topRightText_"+number)
+				if(topRightTextNode.length>0){
+					jQuery("#topRightText").text(topRightTextNode.text()).css({
+						right: popupImage.position().left + "px"
+					}).show();
+				} else {
+					jQuery("#topRightText").hide();
+				}
+
+				var bottomLeftTextNode = jQuery("#bottomLeftText_"+number)
+				if(bottomLeftTextNode.length>0){
+					jQuery("#bottomLeftText").text(bottomLeftTextNode.text()).css({
+						left: popupImage.position().left + "px",
+						top: (popupImage.height()-16) + "px"
+					}).show();
+				} else {
+					jQuery("#bottomLeftText").hide();
+				}
+
+				var bottomRightTextNode = jQuery("#bottomRightText_"+number)
+				if(bottomRightTextNode.length>0){
+					jQuery("#bottomRightText").text(bottomRightTextNode.text()).css({
+						right: popupImage.position().left + "px",
+						top: (popupImage.height()-16) + "px"
+					}).show();
+				} else {
+					jQuery("#bottomRightText").hide();
+				}
+				
+			});
 			window.location.hash='#'+current;
 		}
 		
@@ -264,7 +317,21 @@
 		<div class="backgroundLoader">
 		</div>
 		<div class="popup" id="popup">
-			<img src="data:image/gif;base64,R0lGODlhAQABAIAAANvf7wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" id="popupImg"/>
+			<div class="popupFloatingText" id="topLeftText">
+				
+			</div>
+			<div class="popupFloatingText" id="topRightText">
+				
+			</div>
+			<div class="popupFloatingText" id="bottomLeftText">
+				
+			</div>
+			<div class="popupFloatingText" id="bottomRightText">
+				
+			</div>
+			<div style="position:relative;margin-left:auto;margin-right:auto">
+				<img src="data:image/gif;base64,R0lGODlhAQABAIAAANvf7wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" id="popupImg"/>
+			</div>
 			<div class="button prev">
 				<a href="#0" id="popupPrevLink">&lt;</a>
 			</div>
@@ -299,6 +366,18 @@
 	    	<lr:ThumbnailGrid>
     	    	<lr:GridPhotoCell>
 					<div class="vignette">
+						<% if string.len(image.metadata.topLeftText)>0 then %>
+							<div id="topLeftText_<%= cellIndex %>" style="display:none">$image.metadata.topLeftText</div>
+						<% end %>
+						<% if string.len(image.metadata.topRightText)>0 then %>
+							<div id="topRightText_<%= cellIndex %>" style="display:none">$image.metadata.topRightText</div>
+						<% end %>
+						<% if string.len(image.metadata.bottomLeftText)>0 then %>
+							<div id="bottomLeftText_<%= cellIndex %>" style="display:none">$image.metadata.bottomLeftText</div>
+						<% end %>
+						<% if string.len(image.metadata.bottomRightText)>0 then %>
+							<div id="bottomRightText_<%= cellIndex %>" style="display:none">$image.metadata.bottomRightText</div>
+						<% end %>
 						<div class="number">#<%= cellIndex %></div>
 						<a href="#<%= cellIndex %>" name="<%= cellIndex %>" onclick="openImg(<%= cellIndex %>);return false;"><img src="vignettes/<%= image.exportFilename %>.jpg"/></a>
 					</div>
